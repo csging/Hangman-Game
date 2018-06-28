@@ -1,184 +1,107 @@
-// JavaScript function that wraps everything
-$(document).ready(function() {
-    //create array of isograms, aka words with non repeating letters
-    let words = ['blacksmith', 'bedrock', 'thwack', 'bling', 'fuschia', 'fjord', 'zephyr', 'dermatoglyphics', 'copyright', 'pneumatics', 'glutamine', 'abduction', 'naughty', 'juxtapose', 'isogram'];
+//create array of isograms, aka words with non repeating letters
+let words = ["lucario", "pikachu", "bulbasaur", "charizard", "onyx", "squirtle", "nidoking", "scyther"];
+//starting game stats
+var currentWord = '';
+var currentLetters = [];
 
-    //starting game stats
-    let guesses = 9;
-    let rightWord = [];
-    let wrongWord = [];
-    let wrongLetter = [];
-    let rightGuess = [];
-    let winCount = 0;
-    let lossCount = 0;
-    let rightGuessCounter = 0;
+var blanks = 0;
+var gameBlanks = [];
+let wrongLetter = [];
 
-    //generate random word based on length of words[]
-    let chosenWord = words[Math.floor(Math.random() * words.length)];
+let winCount = 0;
+let lossCount = 0;
+let guesses = 9;
 
+// var validLetters = ["a", 'b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
 
-    //store number of letters in chosen word to letters
-    let letters = chosenWord.split('');
-    let blanks = letters.length;
-    console.log(letters);
-    console.log(blanks);
-    console.log(chosenWord);
+function startGame() {
+    console.log(words)
+    //reset guesses
+    guesses = 9;
+    //generate random word based on length of words
+    currentword = words[Math.floor(Math.random() * words.length)];
+    currentWord = words[Math.floor(Math.random() * words.length)];
+    console.log(currentWord)
 
-    let underscore = [];
+    //current word broken into letters
+    currentLetters = currentWord.split("");
+    //create blanks based on letters in word
+    blanks = currentLetters.length;
+    console.log(currentWord);
+    console.log(currentLetters)
+    //reset game stats from previous round
+    gameBlanks = [];
+    wrongLetter = [];
 
-    //create underscores based on length of chosenWord
-    let underscoreMaker = () => {
-            {
-                for (let i = 0; i < chosenWord.length; i++)
-                    underscore.push("_");
-            }
-            return underscore;
-            console.log(underscore);
+    //create underscores based on length of currentWord
+    for (var i=0; i<blanks; i++) {
+        gameBlanks.push("_")
+    }
+    console.log(gameBlanks)
+    
+    //prints word blanks, wrongLetter array and displays guesses left
+    document.getElementById("word-blanks").innerHTML = gameBlanks.join(" ");
+    document.getElementById("wrong-guesses").innerHTML = wrongLetter.join(" ");
+    document.getElementById("guesses-left").innerHTML = guesses;
+}
+  
+
+function checkLetters(letter) {
+    //this boolean will be toggled if the letter is found anywhere in the word
+    var letterInWord = false;
+    //check if the letter is inside the current word array at all
+    for (var i = 0; i < blanks; i++) {
+        if(currentWord[i] === letter ){
+            letterInWord = true;
         }
-        //underscores output
-    document.getElementById("word-blanks").innerHTML = underscoreMaker();
-
-
-    console.log(underscoreMaker());
-
-    document.getElementById('guesses-left').innerHTML = guesses;
-    // document.getElementById('win-counter').innerHTML = winCount;
-    // document.getElementById('loss-counter').innerHTML = lossCount;
-
-    // let docunderscore = document.getElementsByClassName('word-blanks');
-    let docright = document.getElementsByClassName('theWord');
-    let docwrongguess = document.getElementsByClassName('wrong-guesses')
-
-
-
-
-    //get users guess letter
-
-    document.addEventListener('keypress', (event) => {
-
-        //log the keyCode of the char 
-        let keyword = String.fromCharCode(event.keyCode).toLowerCase();
-        // console.log(keyword)
-        // console.log(event)
-        //check if guess letter is right
-        if (chosenWord.indexOf(keyword) > -1) {
-            // for (let i = 0; i < chosenWord.length; i++) {
-            //add chars to the right word array
-            if (underscore[chosenWord.indexOf(keyword)] = keyword) {
-                // $("word-blanks")
-                rightWord.push(keyword);
-                //increase right guesses
-                rightGuessCounter++;
-                console.log(rightWord);
-                underscore.innerHTML = underscore.join("");
-
-                document.getElementById('word-blanks').innerHTML = underscore.join('');
-                // docright[0].innerHTML = rightGuess.join(' ');
-
-                // underscore[chosenWord.indexOf(keyword)] = keyword;
-
-            } else {
-                //push wrong guesses to wrong letter array
-                wrongWord.push(keyword);
-                //decrease guesses
-                guesses--;
-                console.log(wrongLetter);
-                //output wrong letters to wrong guesses
-                document.getElementById('wrong-guesses').innerHTML = wrongLetter;
-                document.getElementById('wrong-guesses').innerHTML = wrongWord;
+    }
+    //find and populate every instance of letter in currentWord
+    if(letterInWord) {
+        for (var j = 0; j < blanks; j++) {
+    //set the space in blanks and letter equal to the letter when there is a match
+            if (currentWord[j]===letter) {
+                gameBlanks[j]=letter;
             }
-
-            // }
         }
+        console.log(gameBlanks);
+    }
+    //if the letterInWord isnt in currentWord
+    else {
+        wrongLetter.push(letter);
+        guesses--;
+    }
+}
 
-        // if (underscore.join(' ') == chosenWord) {
-        //     alert('you win')
-        // }
+function gameRound() {
+    console.log("Wins: "+ winCount +" | Losses: "+ lossCount +" | Guesses: "+ guesses)
+    //update the dom to show new nubmer of guesses
+    document.getElementById("word-blanks").innerHTML = gameBlanks.join(" ");
+    document.getElementById("wrong-guesses").innerHTML = wrongLetter.join(" ");
+    document.getElementById("guesses-left").innerHTML = guesses;
 
-
-
-        //This function takes an arr for an argument (we use it for our id array)
-        // function print(arr) {
-        //     arr.forEach(function(idName) {
-        //         // If the idName variable is an array do this
-        //         if (Array.isArray(window[idName])) {
-        //             document.getElementById('theWord').textContent = underscore['theWord'].join(' ')
-        //         }
-        //         // If the idName variable is any other type besides array do this
-        //         else {
-        //             document.getElementById('wrong-guesses').textContent = window[idName];
-        //         }
-        //     });
-        // }
-
-
-
-
-
-
-        // underscore[chosenWord.indexOf(keyword)] = keyword;
-        // docunderscore[0]= underscore.join(' ');
-        // docright[0] = rightWord;
-
-
-        // document.getElementById('theWord').innerhtml = blanks.join(' ');
-
-        // //if the char is in the chosen word
-        // //add to the right word array
-        // if (letters[i] === keyword) {
-        //     correctGuess++;
-        //     blanks[i] = keyword;
-        //     console.log(blanks);
-
-        // }
-
-    });
-
-    //rightGuessCounter = length of chosenWord, so when the rgc = blanks, you win
-    if (rightGuessCounter === blanks) {
-        //increase win counter
-        return winCount++;
-        alert('you win!');
-        document.getElementById('win-counter').innerHTML = winCount;
-    } else if (guesses < 1) {
-        //if you have 0 guesses you lose!
-        return lossCount++;
-        alert('you lose! :(');
-        document.getElementById('loss-counter').innerHTML = lossCount;
+    if(currentLetters.toString() === gameBlanks.toString()) {
+        //increase wins
+        winCount++;
+        alert("you win!");
+        //restart game
+        document.getElementById("win-counter").innerHTML = winCount;
+        startGame();
     }
 
-    //             rightWord.push(keyword);
-    //             //and replace the underscore with the right char
-    //             underscore[chosenWord.indexOf(keyword)] = keyword;
-    //             console.log(underscore);
-    //             console.log(rightWord)
+    //if your guesses run out, alert the player and restart the game
+    else if (guesses === 0) {
+        lossCount++;
+        alert("you lose sucker!");
+        document.getElementById("win-counter").innerHTML = lossCount;
+        startGame();
+    }
 
-    //             if (underscore.join(' ') == chosenWord) {
-    //                 console.log("yay");
-    //             }
+}
 
-    //             //if not the right character, put in the wrongWord array
-    //             else {
-    //                 wrongWord.push(keyword);
-    //                 console.log(wrongWord);
-    //             };
-    //         }
-    //     })
-    // };
-    //     //if right push letter to right array
-    //     rightWord.push(keyword);
-    //     //replace underscore with letter
-    //     underscore[chosenWord.indexOf(keyword)] = keyword;
-    //     underscore[0].innerHTML = underscore.join(' ');
-    //     //checks to see if letter matches the guess letter
+startGame();
 
-
-    //     //if wrong push letter to wrong array "wrong-guesses" , decrease lives "guesses-left"
-    //     document.getElementById("wrong-guesses").innerHTML = "Wrong Guesses: " + --guesses
-    //if the player guesses too many wrong answers (9) player loses, increase loss counter "loss-counter"
-
-    //if the player guesses the word correctly increase wins "win-counter"
-
-    //
-
-});
+document.onkeyup = function(event) {
+    var guessLetter = String.fromCharCode(event.which).toLowerCase();
+    checkLetters(guessLetter);
+    gameRound();
+}
